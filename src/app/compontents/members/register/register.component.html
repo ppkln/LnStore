@@ -1,0 +1,118 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h1 class="text-center">แบบฟอร์มสมัครสมาชิก</h1>
+            <div class="card">
+                <div class="card-body">
+                    <form #registerFrm="ngForm" (ngSubmit)="onSubmit(registerFrm.value)" enctype="multipart/form-data"  novalidate>
+                        <div class="form-group mt-2">
+                            <label for="memId">รหัสสมาชิก(เลขประจำตัวประชาชน 13 หลัก) : <font color="red">(ต้องระบุ)</font> </label>
+                            <input type="text" class="form-control " pattern="^[0-9,-]{13,}$" placeholder="รหัสสมาชิก(เลขประจำตัวประชาชน)"  name="memId" id="memId" #memId="ngModel" ngModel required minlength="13" maxlength="13">
+                        </div>
+                        <div *ngIf="memId.errors && (memId.dirty || memId.touched) " class="text-danger">
+                            <div class="mt-2" [hidden]="!memId.errors['pattern'] && !memId.errors['minlength']">
+                                กรุณากรอกข้อมูล ให้ถูกต้อง ตามรูปแบบของเลขประจำตัวประชาชน 13 หลัก
+                            </div>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="email">e-mail : <font color="red">(ต้องระบุ)</font></label>
+                            <input type="email" class="form-control" placeholder="e-mail" name="email" id="email" #email="ngModel" ngModel email required>
+                        </div>
+                        <div *ngIf="email.errors && (email.dirty || email.touched)" class="text-danger">
+                            <div [hidden]="!email.errors">
+                                กรุณากรอกข้อมูลรูปแบบ E-mail ให้ถูกต้อง เช่น email@ab.co
+                            </div>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="pws">Password : <font color="red">(ต้องระบุ)</font></label>
+                            <input type="password" class="form-control someInput" size="8" placeholder="Password" name="pws" id="pws" #pws="ngModel" ngModel required minlength="6" maxlength="20">
+                        </div>
+                        <div *ngIf="pws.errors && (pws.dirty || pws.touched)" class="text-danger">
+                            <div [hidden]="!pws.errors['minlength']">
+                                กรุณากรอกข้อมูล Password อย่างน้อย 6 ตัวอักษรและไม่เกิน 20 ตัวอักษร
+                            </div>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="cf_pws">Confirm Password : <font color="red">(ต้องระบุ)</font></label>
+                            <input type="password" class="form-control someInput" size="8" placeholder="Confirm Password" name="cf_pws" id="cf_pws" #cf_pws="ngModel" ngModel required minlength="6" maxlength="20">
+                        </div>
+                        <div *ngIf="cf_pws.errors && (cf_pws.dirty || cf_pws.touched)" class="text-danger">
+                            <div [hidden]="!cf_pws.errors['minlength']">
+                                กรุณากรอกข้อมูล Confirm Password อย่างน้อย 6 ตัวอักษรและไม่เกิน 20 ตัวอักษร
+                            </div>
+                        </div>
+                        <div style="margin-top:.5rem"><input type="checkbox" onclick="togglePassword()" id="chkpws" name="chkpws"> แสดงรหัสผ่าน (Show Password)</div>
+                        <div class="form-group mt-2">
+                            <label for="fname">ชื่อ : <font color="red">(ต้องระบุ)</font></label>
+                            <input type="text" class="form-control" pattern="^[ก-๏A-Za-z]{2,}$" placeholder="ชื่อ" name="fname" id="fname" #fname="ngModel" ngModel required minlength="2" maxlength="20">
+                            <div *ngIf="fname.errors && (fname.dirty || fname.touched) " class="text-danger">
+                                <div class="mt-2" [hidden]="!fname.errors['pattern'] && !fname.errors['minlength']">
+                                    กรุณากรอกข้อมูล ชื่อ ด้วยตัวอักษร ก-ฮ หรืออักษร a-Z เท่านั้น และมีจำนวนไม่น้อยกว่า 2 ตัวอักษรแต่ไม่เกิน 20 ตัวอักษร
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="lname">นามสกุล : <font color="red">(ต้องระบุ)</font></label>
+                            <input type="text" class="form-control" pattern="^[ก-๏A-Za-z]{2,}$" placeholder="นามสกุล" name="lname" id="lname" #lname="ngModel" ngModel required minlength="2" maxlength="20">
+                        </div>
+                        <div *ngIf="lname.errors && (lname.dirty || lname.touched) " class="text-danger">
+                            <div class="mt-2" [hidden]="!lname.errors['pattern'] && !lname.errors['minlength']">
+                                กรุณากรอกข้อมูล ชื่อ ด้วยตัวอักษร ก-ฮ หรืออักษร a-Z เท่านั้น และมีจำนวนไม่น้อยกว่า 2 ตัวอักษรแต่ไม่เกิน 20 ตัวอักษร
+                            </div>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="sex">เพศ : <font color="red">(ต้องระบุ)</font></label>
+                            <select class="form-select mt-2" aria-label="Default select example" name="sex" id="sex" ngModel #sex="ngModel" required>
+                                <option value="f">หญิง (Female)</option>
+                                <option value="m">ชาย (Male)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group mt-2">
+                            <label for="phoneNumber">เบอร์มือถือ : <font color="red">(ต้องระบุ)</font></label>
+                            <input type="text" class="form-control" pattern="^0([6|8|9])([0-9]{8}$)" placeholder="เบอร์มือถือ" name="phoneNumber" id="phoneNumber" #phoneNumber="ngModel" ngModel minlength="10" maxlength="10" required>
+                        </div>
+                        <div *ngIf="phoneNumber.errors && (phoneNumber.dirty || phoneNumber.touched) " class="text-danger">
+                            <div class="mt-2" [hidden]="!phoneNumber.errors['pattern'] ">
+                                กรุณากรอกข้อมูล ให้ถูกต้อง ตามรูปแบบของหมายเลขโทรศัพท์มือถือ
+                            </div>
+                            <div [hidden]="!phoneNumber.errors['minlength']">
+                                และครบจำนวน 10 ตัวอักษร
+                            </div>
+                        </div>
+                        <!-- for image -->
+                        <div class="form-group mt-2">
+                            <label for="memImg">รูปภาพ :</label>
+                            <input type="file" class="form-control" (change)="onSelectfile($event)" name="memImg" id="memImg" ngModel #memImg="ngModel" accept="image/png, image/gif, image/jpeg" onchange="showPreview(event)">
+                            <img width="40%" id="previewImg" >
+                        </div>
+                        <!-- for image -->
+                        <div class="form-group mt-2">
+                            <label for="address">ที่อยู่ : </label>
+                            <textarea class="form-control" placeholder="ที่อยู่" aria-label="With textarea" name="address" id="address" #address="ngModel" ngModel></textarea>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="positionId">ตำแหน่งงาน : </label>
+                            <select class="form-select mt-2" aria-label="Default select example" name="positionId" id="positionId" ngModel #positionId="ngModel">
+                                <option value="D001">PM</option>
+                                <option value="D002">BA</option>
+                                <option value="D003">SA</option>
+                                <option value="D004">QA</option>
+                                <option value="D005">DEV</option>
+                                <option value="D006">Tester</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group text-center">
+                            <a href="/" class="btn btn-secondary mt-2 me-2">กลับหน้าหลัก</a>
+                            <button type="submit" class="btn btn-success mt-2 me-2" [disabled]="!registerFrm.form.valid">สมัครสมาชิก</button>
+                        </div>
+                        
+                        <br>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
