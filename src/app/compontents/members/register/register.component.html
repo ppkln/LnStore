@@ -83,7 +83,7 @@
                         <!-- for image -->
                         <div class="form-group mt-2">
                             <label for="memImg">รูปภาพ :</label>
-                            <input type="file" class="form-control" (change)="onSelectfile($event)" name="memImg" id="memImg" ngModel #memImg="ngModel" accept="image/png, image/gif, image/jpeg" onchange="showPreview(event)">
+                            <input type="file" class="form-control" (change)="onSelectfile($event)" name="memImg" id="memImg" ngModel #memImg="ngModel" accept="image/png, image/gif, image/jpeg" onchange="showPreview(event)" required>
                             <img width="40%" id="previewImg" >
                         </div>
                         <!-- for image -->

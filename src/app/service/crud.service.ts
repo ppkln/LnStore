@@ -13,7 +13,8 @@ Home_Page: string = 'http://localhost:4200';
 // node/Express API
 REST_API:string = 'http://localhost:8000/api';
 //HttpHeaders
-// HttpHeaders = new HttpHeaders().set('Content-Type','application/json');
+HttpHeaders = new HttpHeaders().set('Content-Type','application/json');
+userLogin:any;
 
   constructor(private httpClient:HttpClient,
     private ngZone:NgZone,
@@ -28,6 +29,42 @@ REST_API:string = 'http://localhost:8000/api';
     )
   }
 
+  // login 
+  login(data:any): Observable<any>{
+      let API_URL = this.REST_API+'/login';
+      return this.httpClient.post(API_URL,data,{headers:this.HttpHeaders})
+      .pipe(map((res:any)=>{
+        return res || {}
+      }),catchError(this.handleError)
+      )
+  }
+//********* Read profile data member */
+  getProfile(id:any): Observable<any>{
+    let API_URL = this.REST_API+'/profile/'+id;
+    return this.httpClient.get(API_URL,{headers:this.HttpHeaders})
+    .pipe(map((res:any)=>{
+      return res || {}
+    }),
+      catchError(this.handleError)
+    )
+  }
+// **** update profile member ******
+updateMember(id:any, data:any): Observable<any>{
+  let API_URL = this.REST_API+'/update-member/'+id;
+    return this.httpClient.put(API_URL, data,{headers:this.HttpHeaders})
+    .pipe(
+      catchError(this.handleError)
+    )
+}
+
+
+
+
+
+
+
+
+  // ******** Test upload file only *************
   TestUploadfile(data:FormData): Observable<any>{
     let API_URL = this.REST_API+'/test-uploadfile';
     return this.httpClient.post(API_URL,data)
@@ -35,7 +72,7 @@ REST_API:string = 'http://localhost:8000/api';
       catchError(this.handleError)
     )
   }
-
+  // ******** End Test upload file only *************
 
   //handle Error
   handleError(error:HttpErrorResponse){

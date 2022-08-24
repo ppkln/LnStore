@@ -1,1 +1,83 @@
-<p>update-member works!</p>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h1 class="text-center">แก้ไขข้อมูลสมัครสมาชิก</h1>
+            <div class="card">
+                <div class="card-body">
+                    <form #updateMemberFrm="ngForm" (ngSubmit)="onUpdate(updateMemberFrm.value)" enctype="multipart/form-data"  novalidate>
+                        <div class="form-group mt-2">
+                            <label for="memId">รหัสสมาชิก : <font color="blue">{{memberIdOld}}</font> </label>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="email">e-mail : <font color="blue">{{userEmail}}</font></label>
+                        </div>
+                        
+                        <div class="form-group mt-2">
+                            <label for="fname">ชื่อ : <font color="red">(ต้องระบุ)</font></label>
+                            <input type="text" class="form-control" pattern="^[ก-๏A-Za-z]{2,}$"  [(ngModel)]="fnameOld" name="fname" id="fname" #fname="ngModel" ngModel required minlength="2" maxlength="20">
+                            <div *ngIf="fname.errors && (fname.dirty || fname.touched) " class="text-danger">
+                                <div class="mt-2" [hidden]="!fname.errors['pattern'] && !fname.errors['minlength']">
+                                    กรุณากรอกข้อมูล ชื่อ ด้วยตัวอักษร ก-ฮ หรืออักษร a-Z เท่านั้น และมีจำนวนไม่น้อยกว่า 2 ตัวอักษรแต่ไม่เกิน 20 ตัวอักษร
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="lname">นามสกุล : <font color="red">(ต้องระบุ)</font></label>
+                            <input type="text" class="form-control" pattern="^[ก-๏A-Za-z]{2,}$"  [(ngModel)]="lnameOld" name="lname" id="lname" #lname="ngModel" ngModel required minlength="2" maxlength="20">
+                        </div>
+                        <div *ngIf="lname.errors && (lname.dirty || lname.touched) " class="text-danger">
+                            <div class="mt-2" [hidden]="!lname.errors['pattern'] && !lname.errors['minlength']">
+                                กรุณากรอกข้อมูล ชื่อ ด้วยตัวอักษร ก-ฮ หรืออักษร a-Z เท่านั้น และมีจำนวนไม่น้อยกว่า 2 ตัวอักษรแต่ไม่เกิน 20 ตัวอักษร
+                            </div>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="sex">เพศ : <font color="red">(ต้องระบุ)</font></label>
+                            <select class="form-select mt-2" aria-label="Default select example" name="sex" id="sex" ngModel #sex="ngModel" required>
+                                <option value="f">หญิง (Female)</option>
+                                <option value="m">ชาย (Male)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group mt-2">
+                            <label for="phoneNumber">เบอร์มือถือ : <font color="red">(ต้องระบุ)</font></label>
+                            <input type="text" class="form-control" pattern="^0([6|8|9])([0-9]{8}$)"  [(ngModel)]="phoneNumberOld" name="phoneNumber" id="phoneNumber" #phoneNumber="ngModel" ngModel minlength="10" maxlength="10" required>
+                        </div>
+                        <div *ngIf="phoneNumber.errors && (phoneNumber.dirty || phoneNumber.touched) " class="text-danger">
+                            <div class="mt-2" [hidden]="!phoneNumber.errors['pattern'] ">
+                                กรุณากรอกข้อมูล ให้ถูกต้อง ตามรูปแบบของหมายเลขโทรศัพท์มือถือ
+                            </div>
+                            <div [hidden]="!phoneNumber.errors['minlength']">
+                                และครบจำนวน 10 ตัวอักษร
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mt-2">
+                            <label for="address">ที่อยู่ : </label>
+                            <textarea class="form-control" placeholder="ที่อยู่" aria-label="With textarea" value="{{addressOld}}" [(ngModel)]="addressOld"  name="address" id="address" #address="ngModel" ngModel></textarea>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="positionId">ตำแหน่งงาน : <font color="red">(ต้องระบุ)</font></label>
+                            <select class="form-select mt-2" aria-label="Default select example" name="positionId" id="positionId" ngModel #positionId="ngModel" required>
+                                <option value="D001">PM</option>
+                                <option value="D002">BA</option>
+                                <option value="D003">SA</option>
+                                <option value="D004">QA</option>
+                                <option value="D005">DEV</option>
+                                <option value="D006">Tester</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group text-center">
+                            <a href="/" class="btn btn-secondary mt-2 me-2">กลับหน้าหลัก</a>
+                            <button type="submit" class="btn btn-success mt-2 me-2" [disabled]="!updateMemberFrm.form.valid">อัพเดตข้อมูล</button>
+                        </div>
+                        
+                        <br>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

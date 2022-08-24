@@ -12,6 +12,7 @@ import { ProfileListComponent } from './compontents/members/profile-list/profile
 import { LoginComponent } from './compontents/members/login/login.component';
 import { DeleteMemberComponent } from './compontents/members/delete-member/delete-member.component';
 import { TestUploadfileComponent } from './components/test-uploadfile/test-uploadfile.component';
+import { ProfileComponent } from './compontents/members/profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { TestUploadfileComponent } from './components/test-uploadfile/test-uploa
     ProfileListComponent,
     LoginComponent,
     DeleteMemberComponent,
-    TestUploadfileComponent
+    TestUploadfileComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,

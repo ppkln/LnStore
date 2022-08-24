@@ -1,1 +1,38 @@
-<p>login works!</p>
+<div class="container">
+    <div class="row">
+        <div class="col-11 col-md-7 mx-auto mt-5 card">
+            <div class="card-body">
+            <h1>ลงชื่อเข้าระบบ</h1>
+            <form #loginFrm="ngForm"  (ngSubmit)="onSubmit(loginFrm.value)">
+                <div class="form-group mt-2">
+                    <label for="email">e-mail : <font color="red">(ต้องระบุ)</font></label>
+                    <input type="email" class="form-control" placeholder="e-mail" name="email" id="email" #email="ngModel" ngModel email required>
+                </div>
+                <div *ngIf="email.errors && (email.dirty || email.touched)" class="text-danger">
+                    <div [hidden]="!email.errors">
+                        กรุณากรอกข้อมูลรูปแบบ E-mail ให้ถูกต้อง เช่น email@ab.co
+                    </div>
+                </div>
+                <div class="form-group mt-2">
+                    <label for="pws">Password : <font color="red">(ต้องระบุ)</font></label>
+                    <input type="password" class="form-control someInput" size="8" placeholder="Password" name="pws" id="pws" #pws="ngModel" ngModel required minlength="6" maxlength="20">
+                </div>
+                <div *ngIf="pws.errors && (pws.dirty || pws.touched)" class="text-danger">
+                    <div [hidden]="!pws.errors['minlength']">
+                        กรุณากรอกข้อมูล Password อย่างน้อย 6 ตัวอักษรและไม่เกิน 20 ตัวอักษร
+                    </div>
+                </div>
+                <div style="margin-top:.5rem"><input type="checkbox" onclick="togglePassword()" id="chkpws" name="chkpws"> แสดงรหัสผ่าน (Show Password)</div>
+                <div class="text-center">
+                    <button class="btn btn-primary mt-2 me-2" type="submit" [disabled]="!loginFrm.form.valid">ลงชื่อเข้าระบบ</button>
+                    <button class="btn btn-danger mt-2 me-2" type="reset" [disabled]="!loginFrm.form.valid">ล้างข้อมูล</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+  
+
+
