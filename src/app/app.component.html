@@ -275,14 +275,21 @@
           <a class="navbar-brand" href="/"> <h1 >LnStore</h1> </a>
           <div id="mynavbar" class="collapse navbar-collapse">
               <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
+                <!-- เช็คว่า levelWork ป็นค่าว่าง จะซ่อนเมนู login -->
+                <li class="nav-item" *ngIf="(userProfile?.levelWork ?? 0) == '' "> 
                   <a class="nav-link" routerLinkActive="active" routerLink="/login">Login</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" routerLinkActive="active" routerLink="/register">Register</a>
                 </li>
-                <li class="nav-item">
-                  <a class="nav-link"  routerLink="/profile-list">Profile List</a>
+                <!-- เช็คว่า levelWork มีค่าน้อยกว่าหรือเท่ากับ 6 จะซ่อนเมนู profile list -->
+                <li class="nav-item" *ngIf="(userProfile?.levelWork ?? 0) > 6">
+                  <a class="nav-link" routerLinkActive="active" routerLink="/profile-list">Profile List</a>
+                </li>
+                <!-- เช็คว่า ถ้า login อยู่จะแสดงปุ่ม logout -->
+                <li class="nav-item" *ngIf="(userProfile?.levelWork ?? 0) >0 ">
+                  <a  class="btn btn-danger" (click)="logout()">Logout</a>
+                  <!-- <a class="nav-link"  routerLink="/logout">Logout</a> -->
                 </li>
                 
                 <!-- <li>

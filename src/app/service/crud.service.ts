@@ -1,9 +1,9 @@
 import { Injectable,NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError,map } from 'rxjs/operators';
+import { BehaviorSubject,catchError,map } from 'rxjs';
 import { Observable,throwError } from 'rxjs';
 import { HttpClient,HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import  *  as CryptoJS from  'crypto-js'; // จัดการเรื่องการเข้ารหัส token localstorage อีกต่อนึง เพื่อความปลอดภัยเรื่อง token
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +17,8 @@ REST_API:string = 'http://localhost:8000/api';
 HttpHeaders = new HttpHeaders().set('Content-Type','application/json');
 userLogin:any;
 key:any = 'rx78gundamfirst'; // key สำหรับไว้เข้ารหัส /ถอดรหัส token
+jwtService: JwtHelperService = new JwtHelperService();
+userProfile = new BehaviorSubject<any | null>(null);
 
 constructor(private httpClient:HttpClient,
   private ngZone:NgZone,
@@ -48,6 +50,7 @@ constructor(private httpClient:HttpClient,
 //   }
 // // สิ้นสุดการจัดการ token localstorage
 
+
   //add member
   Register(data:any): Observable<any> {
     let API_URL = this.REST_API+'/register';
@@ -62,8 +65,11 @@ constructor(private httpClient:HttpClient,
       let API_URL = this.REST_API+'/login';
       return this.httpClient.post(API_URL,data,{headers:this.HttpHeaders})
       .pipe(map((res:any)=>{
-        console.log('token จาก backEnd = '+res.token);// จัดเก็บ token ลงใน localstorage ของ browser
-        localStorage.setItem('token',res.token);
+        console.log('token จากการ login (backEnd-api) = '+res.token);
+        localStorage.setItem('token',res.token);// จัดเก็บ token ลงใน localstorage ของ browser
+        let tokenshowdetail = this.jwtService.decodeToken(res.token);
+        console.log('ทำการ decode Token แสดง levelWork  (backEnd-api) = '+tokenshowdetail.levelWork);// decode เพื่อแสดงข้อมูล levelWork ที่เก็บไว้ใน token
+        this.userProfile.next(tokenshowdetail);
         return res || {}
       }),catchError(this.handleError)
       )
@@ -107,6 +113,7 @@ deleteMember(email:any){
     catchError(this.handleError)
   )
 }
+
 
 // ******** download file image  *******
 downloadImage(imageName: string): Observable < Blob > {  

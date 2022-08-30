@@ -22,6 +22,7 @@ export class ProfileComponent implements OnInit {
   imgMemOld:any;
   addressOld:any;
   positionOld:any;
+  dataProfile:any;
 
   constructor(private router: Router,
     private ngZone:NgZone,
@@ -47,7 +48,13 @@ export class ProfileComponent implements OnInit {
     }
 
   ngOnInit(): void {
-    
+    if(localStorage.getItem('token')){ // มีค่า token ถึงจะมีสิทธิ์เข้าหน้าเพจนี้
+      this.crudService.getProfileList().subscribe((res)=>{
+        this.dataProfile = res;
+      })
+    } else {
+      this.ngZone.run(()=>{this.router.navigateByUrl('/login')})
+    }
   }
 
 //   downloadImage(data:any) {  

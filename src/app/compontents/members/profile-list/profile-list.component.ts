@@ -18,8 +18,7 @@ export class ProfileListComponent implements OnInit {
      }
 
   ngOnInit(): void {
-    console.log('localStorage.getItem => '+localStorage.getItem('token'))
-    if(localStorage.getItem('token')){
+    if(localStorage.getItem('token')){ // มีค่า token ถึงจะมีสิทธิ์เข้าหน้าเพจนี้
       this.crudservice.getProfileList().subscribe((res)=>{
         this.dataProfile = res;
       })

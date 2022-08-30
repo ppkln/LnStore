@@ -151,7 +151,7 @@ backendRoute.post('/login',(req,res)=>{
                 const result = await bcryptjs.compare(loginObj.pws,User.pws)
                 const idObjMem = await member.findOne({email:loginObj.email})
                 if (idObjMem){
-                    let token = jwt.sign({email:idObjMem.email,levelWork:User.levelWork},secretkeyln,{expiresIn:'1h'});
+                    let token = jwt.sign({id:idObjMem._id,email:idObjMem.email,levelWork:User.levelWork},secretkeyln,{expiresIn:'1h'});
                     return {id:idObjMem._id, email:idObjMem.email, LoginStatus:result, token}
                 } else {
                     return {id:null, e_mail:null, LoginStatus:false}
@@ -207,14 +207,14 @@ backendRoute.get('/profile/:id',(req,res)=>{
 })
 // get Profile List
 backendRoute.get('/profile-list',(req,res)=>{
-    member.find({},(err,data)=>{
-        if(err){
-            console.log('ไม่พบข้อมูลสมาชิก (profile-list)');
-            res.status(500).json(err);
-        } else {
-            res.status(200).json(data);
-        }
-    })
+        member.find({},(err,data)=>{
+            if(err){
+                console.log('ไม่พบข้อมูลสมาชิก (profile-list)');
+                res.status(500).json(err);
+            } else {
+                res.status(200).json(data);
+            }
+        })
 })
 
 // update Profile 
@@ -233,7 +233,6 @@ backendRoute.put('/update-member/:id',(req,res)=>{
 
 // *****  Delete Member **********
 backendRoute.delete('/delete-member/:email', (req,res,next)=>{
-
         member.findOneAndRemove({email:req.params.email},(err,doc)=>{
             if(err){
                 return next(err)
@@ -251,6 +250,8 @@ backendRoute.delete('/delete-member/:email', (req,res,next)=>{
         })
     
 })
+
+
 // จำลองการตรวจสอบการ Authorization ด้วย postman
 backendRoute.post('/authen',(req,res)=>{
     try{
