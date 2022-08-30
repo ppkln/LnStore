@@ -33,6 +33,6 @@ export class AppComponent implements OnInit {
 
   logout(){
     localStorage.removeItem('token');
-    this.ngZone.run(()=>{this.router.navigateByUrl('/login')});
+    window.location.replace("/");
   }
 }
