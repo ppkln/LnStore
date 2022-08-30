@@ -63,8 +63,8 @@
                         <div class="form-group mt-2">
                             <label for="sex">เพศ : <font color="red">(ต้องระบุ)</font></label>
                             <select class="form-select mt-2" aria-label="Default select example" name="sex" id="sex" ngModel #sex="ngModel" required>
-                                <option value="f">หญิง (Female)</option>
-                                <option value="m">ชาย (Male)</option>
+                                <option value="หญิง">หญิง (Female)</option>
+                                <option value="ชาย">ชาย (Male)</option>
                             </select>
                         </div>
 
@@ -82,7 +82,7 @@
                         </div>
                         <!-- for image -->
                         <div class="form-group mt-2">
-                            <label for="memImg">รูปภาพ :</label>
+                            <label for="memImg">รูปภาพ : (ขนาดไฟล์ไม่เกิน 2 Mb)</label>
                             <input type="file" class="form-control" (change)="onSelectfile($event)" name="memImg" id="memImg" ngModel #memImg="ngModel" accept="image/png, image/gif, image/jpeg" onchange="showPreview(event)" required>
                             <img width="40%" id="previewImg" >
                         </div>
@@ -94,12 +94,12 @@
                         <div class="form-group mt-2">
                             <label for="positionId">ตำแหน่งงาน : </label>
                             <select class="form-select mt-2" aria-label="Default select example" name="positionId" id="positionId" ngModel #positionId="ngModel">
-                                <option value="D001">PM</option>
-                                <option value="D002">BA</option>
-                                <option value="D003">SA</option>
-                                <option value="D004">QA</option>
-                                <option value="D005">DEV</option>
-                                <option value="D006">Tester</option>
+                                <option value="Project Manager">Project Manager</option>
+                                <option value="Business Analyst">Business Analyst</option>
+                                <option value="System Analyst">System Analyst</option>
+                                <option value="Quality Assurance">Quality Assurance</option>
+                                <option value="Developer">Developer</option>
+                                <option value="Tester">Tester</option>
                             </select>
                         </div>
                         

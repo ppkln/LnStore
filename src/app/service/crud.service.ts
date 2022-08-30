@@ -38,7 +38,7 @@ userLogin:any;
       }),catchError(this.handleError)
       )
   }
-//********* Read profile data member */
+//********* Read profile a member *************/
   getProfile(id:any): Observable<any>{
     let API_URL = this.REST_API+'/profile/'+id;
     return this.httpClient.get(API_URL,{headers:this.HttpHeaders})
@@ -48,6 +48,18 @@ userLogin:any;
       catchError(this.handleError)
     )
   }
+/********* Read profile list ******************/
+getProfileList(): Observable<any>{
+  let API_URL = this.REST_API+'/profile-list';
+  return this.httpClient.get(API_URL,{headers:this.HttpHeaders})
+  .pipe(map((res:any)=>{
+    return res || {}
+  }),
+    catchError(this.handleError)
+  )
+}
+
+
 // **** update profile member ******
 updateMember(id:any, data:any): Observable<any>{
   let API_URL = this.REST_API+'/update-member/'+id;
@@ -57,8 +69,22 @@ updateMember(id:any, data:any): Observable<any>{
     )
 }
 
+// **** delete Member *********
+deleteMember(id:any){
+  let API_URL = this.REST_API+'/delete-member/'+id;
+  return this.httpClient.delete(API_URL,{headers:this.HttpHeaders})
+  .pipe(
+    catchError(this.handleError)
+  )
+}
 
-
+// ******** download file image  *******
+downloadImage(imageName: string): Observable < Blob > {  
+  let API_URL = 'http://localhost:8000/api/node-sysbackend/dist/image/img_members/'+imageName;
+  return this.httpClient.get(API_URL, {  
+      responseType: 'blob'  
+  });  
+}  
 
 
 
@@ -73,6 +99,9 @@ updateMember(id:any, data:any): Observable<any>{
     )
   }
   // ******** End Test upload file only *************
+
+
+
 
   //handle Error
   handleError(error:HttpErrorResponse){

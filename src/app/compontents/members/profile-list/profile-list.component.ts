@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,NgZone } from '@angular/core';
+import { FormGroup, FormBuilder } from '@angular/forms';
+import { Router,ActivatedRoute } from '@angular/router';
+import { CrudService } from 'src/app/service/crud.service';
 
 @Component({
   selector: 'app-profile-list',
@@ -6,10 +9,26 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./profile-list.component.css']
 })
 export class ProfileListComponent implements OnInit {
+  dataProfile:any = [];
 
-  constructor() { }
+  constructor(private router: Router,
+    private ngZone:NgZone,
+    private activatedRoute: ActivatedRoute,
+    private crudservice:CrudService) {
+     }
 
   ngOnInit(): void {
+    this.crudservice.getProfileList().subscribe((res)=>{
+      this.dataProfile = res;
+    })
+  }
+
+  delete(dataObj:any, i:any){
+    if (window.confirm("ต้องการลบข้อมูลชุดนี้จริงหรือไม่?")){
+      this.crudservice.deleteMember(dataObj).subscribe((res)=>{
+        this.dataProfile.splice(i,1);
+      })
+  }
   }
 
 }

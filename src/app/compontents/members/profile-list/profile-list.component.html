@@ -1,1 +1,35 @@
-<p>profile-list works!</p>
+<div class="container mt-3">
+    <div class="d-flex justify-content between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3 border-buttom">
+        <h1>รายการสมาชิก</h1>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="text-center">
+                <tr>
+                    <th scope="col">รหัสสมาชิก</th>
+                    <th scope="col">email</th>
+                    <th scope="col">ชื่อ</th>
+                    <th scope="col">นามสกุล</th>
+                    <th scope="col">เพศ</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody >
+                <tr class="table-striped" *ngFor="let data of dataProfile; let i=index">
+                    <td>{{data.memberId}}</td>
+                    <td>{{data.email}}</td>
+                    <td>{{data.fname}}</td>
+                    <td>{{data.lname}}</td>
+                    <td>{{data.sex}}</td>
+                    <td>
+                        <div class="text-center">
+                            <button class="btn btn-sm btn-primary mt-2 me-2" routerLink="/profile/{{data._id}}">รายละเอียด</button>
+                            <button class="btn btn-sm btn-danger mt-2 me-2" (click)="delete(data.email,i)">ลบ</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

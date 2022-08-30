@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { Router,ActivatedRoute } from '@angular/router';
 import { CrudService } from 'src/app/service/crud.service';
 
@@ -20,31 +20,29 @@ export class UpdateMemberComponent implements OnInit {
   phoneNumberOld:any;
   imgMemOld:any;
   addressOld:any;
+  positionOld:any;
 
 
-  constructor(public formBuilder: FormBuilder,
-    private router: Router,
+  constructor(private router: Router,
     private ngZone:NgZone,
     private activatedRoute: ActivatedRoute,
     private crudservice:CrudService) { 
       this.userLoginID = this.activatedRoute.snapshot.paramMap.get('id'); //เป็นการนำข้อมูล parameter ที่แนบมากับ URL มาใช้งาน 
       // this.Ids = this.route.snapshot.queryParamMap.get('Id');
-
-      this.crudservice.getProfile(this.userLoginID).subscribe(res=>{ // เรียกข้อมูล profile เดิมก่อนการ update ของ member ออกมาเพื่อนำไปใส่ใน updateMemberFrm 
-         // สร้างตัวแปรสำหรับแต่ละ element ของ updateMemberFrm 
-        this._idOld = res._id;
-        this.userEmail = res.email;
-        this.memberIdOld = res.memberId;
-        this.fnameOld = res.fname;
-        this.lnameOld = res.lname;
-        this.phoneNumberOld = res.phoneNumber;
-        this.addressOld = res.address;
-        
-      })
-
     }
 
   ngOnInit(): void {
+    this.crudservice.getProfile(this.userLoginID).subscribe(res=>{ // เรียกข้อมูล profile เดิมก่อนการ update ของ member ออกมาเพื่อนำไปใส่ใน updateMemberFrm 
+      // สร้างตัวแปรสำหรับแต่ละ element ของ updateMemberFrm 
+     this._idOld = res._id;
+     this.userEmail = res.email;
+     this.memberIdOld = res.memberId;
+     this.fnameOld = res.fname;
+     this.lnameOld = res.lname;
+     this.phoneNumberOld = res.phoneNumber;
+     this.addressOld = res.address;
+     this.positionOld = res.positionId;
+   })
   }
 
 
@@ -56,7 +54,6 @@ export class UpdateMemberComponent implements OnInit {
         window.alert('ปรับปรุงข้อมูลสมาชิกไม่สำเร็จ');
         this.ngZone.run(()=>{this.router.navigateByUrl('/login')});
       },()=>{
-        window.alert('ปรับปรุงข้อมูลสมาชิกสำเร็จ (Successfully)');
         this.ngZone.run(()=>{this.router.navigateByUrl('/profile/'+this.userLoginID)});
       })
 

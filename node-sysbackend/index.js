@@ -14,15 +14,21 @@ app.use(session({
     secret:"mykeySessionLN",
     resave:false,
     saveUninitialized:true,
-    cookie:{maxAge:3600*1000} // session อายุ 1 ชั่วโมง
+    cookie:{maxAge:60*1000} // session อายุ 10 นาที
 }));
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended:false}));
-app.use(cookieParser());
+// app.use(cookieParser());
 app.use(cors());
 //static directory path
 app.use(express.static(path.join(__dirname,'dist/')))
+
+// loggin middleware
+app.use((req,res,next)=>{
+    console.info(req.method+ '-'+req.url);
+    next();
+})
 
 //base route of backend
 app.get('/',(req,res)=>{

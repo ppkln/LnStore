@@ -2,10 +2,13 @@ const express = require('express')
 const backendRoute = express.Router();
 const bcryptjs = require('bcryptjs');
 const session = require('express-session');
+const jwt = require('jsonwebtoken');
+const secretkeyln='r22kjhjkhkjsdf65sdf5dfg';
+const fs = require('fs');
 
 const member = require('./../models/members');
 const memLogin = require('./../models/memLogin');
-const testUploadData = require('./../models/testUploadfile');// สำหรับทดสอบเขียนโปรแกรมเท่านั้น
+const testUploadData = require('./../models/testUploadfile');// สำหรับทดสอบอัพไฟล์เท่านั้น
 
 
 
@@ -42,7 +45,26 @@ const uploadImgMem = multer({
 })
 //สิ้นสุดคำสั่งการอัพไฟล์
 
-// Register 
+// *********** function delete image member *******
+const deleteImageMember = async nameFileDelete =>{
+    const fileToBeRemoved = 'dist/image/img_members/'+nameFileDelete;
+
+    await fs.unlink(fileToBeRemoved, (err)=> {
+        if(err && err.code == 'ENOENT') {
+            // ไม่มีไฟล์ดังกล่าวอยู่ในระบบ
+            console.info("ไม่พบไฟล์ที่ต้องการลบ");
+        } else if (err) {
+            // อาจจเกิดข้อผิดพลาดอื่นๆ เช่น ไม่มีสิทธิ์ในการลบไฟล์
+            console.error("เกิดข้อผิดพลาดขณะทำการลบไฟล์");
+        } else {
+            console.log("ลบไฟล์สำเร็จ (Deleted successfully)");
+        }
+    });
+    return ;
+}
+// *********** end function delete image member *******
+
+// ******  Register Member ***********
     //ฟังก์ชันย่อยในการบันทึกข้อมูลลง MongoDB
     const addMember = async memObj =>{
         const newmember = new member ({
@@ -58,7 +80,7 @@ const uploadImgMem = multer({
             dateRegis:Date(),
             statusWork:true,
         })
-        const data = newmember.save();
+        const data = await newmember.save();
         console.log('บันทึกข้อมูลลง members ใน MongoDB สำเร็จ');
 
         const hash = await bcryptjs.hash(memObj.pws,10);
@@ -66,6 +88,7 @@ const uploadImgMem = multer({
             memberId:memObj.memId,
             email:memObj.email,
             pws:hash,
+            levelWork:1,
             statusLogin:true
         })
         const data2 = await userLogin.save();
@@ -110,6 +133,7 @@ backendRoute.post('/register', uploadImgMem.single('file'),(req,res,next)=>{
         } 
     })
 });
+// ****** End Register Member ***********
 
 // ********* Login **********
 backendRoute.post('/login',(req,res)=>{
@@ -127,7 +151,8 @@ backendRoute.post('/login',(req,res)=>{
                 const result = await bcryptjs.compare(loginObj.pws,User.pws)
                 const idObjMem = await member.findOne({email:loginObj.email})
                 if (idObjMem){
-                    return {id:idObjMem._id, email:idObjMem.email, LoginStatus:result}
+                    let token = jwt.sign({email:idObjMem.email,levelWork:User.levelWork},secretkeyln);
+                    return {id:idObjMem._id, email:idObjMem.email, LoginStatus:result, token}
                 } else {
                     return {id:null, e_mail:null, LoginStatus:false}
                 }
@@ -145,12 +170,12 @@ backendRoute.post('/login',(req,res)=>{
                 req.session.userObjId = result.id
                 req.session.email = result.email
                 req.session.LoginStatus = result.LoginStatus
-                req.session.cookie.maxAge= 3600*1000 //อายุของ session เท่ากับ 1 ชั่วโมง
                 console.log("ผ่านการ Login")
                 const sessLogin={
                     sessionUserObjID:req.session.userObjId,
                     sessionEmail:req.session.email,
-                    sessionLoginStatus:req.session.LoginStatus
+                    sessionLoginStatus:req.session.LoginStatus,
+                    token:result.token
                 }
                 res.status(200).json(sessLogin);
             } else {
@@ -158,7 +183,8 @@ backendRoute.post('/login',(req,res)=>{
                 const sessLogin={
                     sessionUserObjID:null,
                     sessionEmail:null,
-                    sessionLoginStatus:false
+                    sessionLoginStatus:false,
+                    token:''
                 }
                 res.status(500).json(sessLogin);
             }
@@ -170,13 +196,22 @@ backendRoute.post('/login',(req,res)=>{
 
 // getProfile 
 backendRoute.get('/profile/:id',(req,res)=>{
-    console.log("ค่าที่แนบมาพร้อม URL (backendRoute.get-id) : "+req.params.id)
     member.findOne({_id:req.params.id},(err,data)=>{
         if (err){
             console.log('ไม่พบข้อมูลสมาชิก');
             res.status(500).json(err);
         } else {
-            console.log('ข้อมูลสมาขิก data._id = '+data._id);
+            res.status(200).json(data);
+        }
+    })
+})
+// get Profile List
+backendRoute.get('/profile-list',(req,res)=>{
+    member.find({},(err,data)=>{
+        if(err){
+            console.log('ไม่พบข้อมูลสมาชิก (profile-list)');
+            res.status(500).json(err);
+        } else {
             res.status(200).json(data);
         }
     })
@@ -184,10 +219,8 @@ backendRoute.get('/profile/:id',(req,res)=>{
 
 // update Profile 
 backendRoute.put('/update-member/:id',(req,res)=>{
-    console.log("ค่า objectID ที่แนบมาพร้อม URL (backendRoute.put-id) : "+req.params.id)
     let data = req.body;
-    console.log('ค่าของ data ที่ส่งแบบ body มา= '+data)
-    member.findByIdAndUpdate({_id:req.params.id},data,{useFindAndModify:false}).exec((err,doc)=>{
+    member.findByIdAndUpdate({_id:req.params.id},data).exec((err,doc)=>{
         if(err){
             console.log('ปรับปรุงข้อมูลสมาชิก ไม่สำเร็จ');
             res.status(500).json(err);
@@ -196,12 +229,27 @@ backendRoute.put('/update-member/:id',(req,res)=>{
             res.status(200).json(doc);
         }
     })
-
 });
 
-
-
-
+// *****  Delete Member **********
+backendRoute.delete('/delete-member/:email', (req,res,next)=>{
+    member.findOneAndRemove({email:req.params.email},(err,doc)=>{
+        if(err){
+            return next(err)
+        } else {
+            memLogin.findOneAndRemove({email:req.params.email},(err,docc)=>{
+                if (err){
+                    return next(err)
+                } else{
+                    const imgname = doc.imgMem
+                    deleteImageMember(imgname);
+                    res.status(200).json({msg:doc});
+                }
+            })
+        }
+    })
+    
+})
 
 
 
