@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { catchError,map } from 'rxjs/operators';
 import { Observable,throwError } from 'rxjs';
 import { HttpClient,HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import  *  as CryptoJS from  'crypto-js'; // จัดการเรื่องการเข้ารหัส token localstorage อีกต่อนึง เพื่อความปลอดภัยเรื่อง token
 
 @Injectable({
   providedIn: 'root'
@@ -15,10 +16,37 @@ REST_API:string = 'http://localhost:8000/api';
 //HttpHeaders
 HttpHeaders = new HttpHeaders().set('Content-Type','application/json');
 userLogin:any;
+key:any = 'rx78gundamfirst'; // key สำหรับไว้เข้ารหัส /ถอดรหัส token
 
-  constructor(private httpClient:HttpClient,
-    private ngZone:NgZone,
-    private router:Router) { }
+constructor(private httpClient:HttpClient,
+  private ngZone:NgZone,
+  private router:Router) { }
+
+// จัดการเกี่ยวกับ token localstorage 
+//   private encrypt(txt: string): string { //เข้ารหัส token
+//     return CryptoJS.AES.encrypt(txt, this.key).toString();
+//   }
+
+//   private decrypt(txtToDecrypt: string) { //ถอดรหัส token
+//     return CryptoJS.AES.decrypt(txtToDecrypt, this.key).toString(CryptoJS.enc.Utf8);
+//   }
+
+//   public saveDataToken(key: string, value: string) {
+//     localStorage.setItem(key, this.encrypt(value));
+//   }
+
+//   public getDataToken(key: string) {
+//     let data = localStorage.getItem(key)|| "";
+//     return this.decrypt(data);
+//   }
+//   public removeDataToken(key: string) {
+//     localStorage.removeItem(key);
+//   }
+
+//   public clearDataToken() {
+//     localStorage.clear();
+//   }
+// // สิ้นสุดการจัดการ token localstorage
 
   //add member
   Register(data:any): Observable<any> {
@@ -34,6 +62,8 @@ userLogin:any;
       let API_URL = this.REST_API+'/login';
       return this.httpClient.post(API_URL,data,{headers:this.HttpHeaders})
       .pipe(map((res:any)=>{
+        console.log('token จาก backEnd = '+res.token);// จัดเก็บ token ลงใน localstorage ของ browser
+        localStorage.setItem('token',res.token);
         return res || {}
       }),catchError(this.handleError)
       )
@@ -70,8 +100,8 @@ updateMember(id:any, data:any): Observable<any>{
 }
 
 // **** delete Member *********
-deleteMember(id:any){
-  let API_URL = this.REST_API+'/delete-member/'+id;
+deleteMember(email:any){
+  let API_URL = this.REST_API+'/delete-member/'+email;
   return this.httpClient.delete(API_URL,{headers:this.HttpHeaders})
   .pipe(
     catchError(this.handleError)

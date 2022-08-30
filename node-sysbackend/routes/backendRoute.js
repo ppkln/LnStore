@@ -151,7 +151,7 @@ backendRoute.post('/login',(req,res)=>{
                 const result = await bcryptjs.compare(loginObj.pws,User.pws)
                 const idObjMem = await member.findOne({email:loginObj.email})
                 if (idObjMem){
-                    let token = jwt.sign({email:idObjMem.email,levelWork:User.levelWork},secretkeyln);
+                    let token = jwt.sign({email:idObjMem.email,levelWork:User.levelWork},secretkeyln,{expiresIn:'1h'});
                     return {id:idObjMem._id, email:idObjMem.email, LoginStatus:result, token}
                 } else {
                     return {id:null, e_mail:null, LoginStatus:false}
@@ -233,24 +233,34 @@ backendRoute.put('/update-member/:id',(req,res)=>{
 
 // *****  Delete Member **********
 backendRoute.delete('/delete-member/:email', (req,res,next)=>{
-    member.findOneAndRemove({email:req.params.email},(err,doc)=>{
-        if(err){
-            return next(err)
-        } else {
-            memLogin.findOneAndRemove({email:req.params.email},(err,docc)=>{
-                if (err){
-                    return next(err)
-                } else{
-                    const imgname = doc.imgMem
-                    deleteImageMember(imgname);
-                    res.status(200).json({msg:doc});
-                }
-            })
-        }
-    })
+
+        member.findOneAndRemove({email:req.params.email},(err,doc)=>{
+            if(err){
+                return next(err)
+            } else { // ลบข้อมูลใน collection การ login ด้วย
+                memLogin.findOneAndRemove({email:req.params.email},(err,docc)=>{
+                    if (err){
+                        return next(err)
+                    } else{
+                        const imgname = doc.imgMem
+                        deleteImageMember(imgname);
+                        res.status(200).json({msg:doc});
+                    }
+                })
+            }
+        })
     
 })
-
+// จำลองการตรวจสอบการ Authorization ด้วย postman
+backendRoute.post('/authen',(req,res)=>{
+    try{
+        const token = req.headers.authorization.split(' ')[1];
+        const decode = jwt.verify(token,secretkeyln);
+        res.json({status:'ok',decode});
+    }catch(err){
+        res.json({status:'error',message:err.message});
+    }
+})
 
 
 

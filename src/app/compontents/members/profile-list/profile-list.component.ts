@@ -18,9 +18,14 @@ export class ProfileListComponent implements OnInit {
      }
 
   ngOnInit(): void {
-    this.crudservice.getProfileList().subscribe((res)=>{
-      this.dataProfile = res;
-    })
+    console.log('localStorage.getItem => '+localStorage.getItem('token'))
+    if(localStorage.getItem('token')){
+      this.crudservice.getProfileList().subscribe((res)=>{
+        this.dataProfile = res;
+      })
+    } else {
+      this.ngZone.run(()=>{this.router.navigateByUrl('/login')})
+    }
   }
 
   delete(dataObj:any, i:any){
