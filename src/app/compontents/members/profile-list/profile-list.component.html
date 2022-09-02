@@ -15,19 +15,22 @@
                 </tr>
             </thead>
             <tbody >
-                <tr class="table-striped" *ngFor="let data of dataProfile; let i=index">
-                    <td>{{data.memberId}}</td>
-                    <td>{{data.email}}</td>
-                    <td>{{data.fname}}</td>
-                    <td>{{data.lname}}</td>
-                    <td>{{data.sex}}</td>
-                    <td>
-                        <div class="text-center">
-                            <button class="btn btn-sm btn-primary mt-2 me-2" routerLink="/profile/{{data._id}}">รายละเอียด</button>
-                            <button class="btn btn-sm btn-danger mt-2 me-2"  (click)="delete(data.email,i)">ลบ</button>
-                        </div>
-                    </td>
-                </tr>
+                <!-- <tr *ngIf="dataProfile==''; else showData"><td colspan='6' class='text-center'> ไม่พบข้อมูล</td></tr>
+                <ng-template #showData> -->
+                    <tr class="table-striped" *ngFor="let data of dataProfile; let i=index">
+                        <td>{{data.memberId}}</td>
+                        <td>{{data.email}}</td>
+                        <td>{{data.fname}}</td>
+                        <td>{{data.lname}}</td>
+                        <td>{{data.sex}}</td>
+                        <td>
+                            <div class="text-center">
+                                <button class="btn btn-sm btn-primary mt-2 me-2" routerLink="/profile/{{data._id}}">รายละเอียด</button>
+                                <button class="btn btn-sm btn-danger mt-2 me-2"  (click)="delete(data.email,i)">ลบ</button>
+                            </div>
+                        </td>
+                    </tr>
+                <!-- </ng-template> -->
             </tbody>
         </table>
     </div>

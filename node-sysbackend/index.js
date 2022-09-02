@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const session = require('express-session');
-const cookieParser = require('cookie-parser');
 
 const app = express();
 
@@ -34,6 +33,7 @@ app.use((req,res,next)=>{
 app.get('/',(req,res)=>{
     res.sendFile(path.join(__dirname,'dist/index.html'));
 });
+
 
 //root API
 app.use('/api', backendRoute);

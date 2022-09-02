@@ -25,7 +25,6 @@ export class AppComponent implements OnInit {
  
   ngOnInit(): void {
     this.GToken = localStorage.getItem('token'); // เรียกใช้ token ที่แนบมากับ header ของ browser ได้เลยตรงๆ
-    console.log('ค่า token = '+this.GToken);
     let tokenshowdetail = this.jwtService.decodeToken(this.GToken);
     console.log('ค่า tokenshowdetail.levelWork = '+tokenshowdetail.levelWork);
     this.userProfile = tokenshowdetail;

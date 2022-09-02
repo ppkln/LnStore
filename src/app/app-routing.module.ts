@@ -10,7 +10,7 @@ import { TestUploadfileComponent } from './components/test-uploadfile/test-uploa
 import { ProfileComponent } from './compontents/members/profile/profile.component';
 
 const routes: Routes = [
-  {path:'', pathMatch:'full',redirectTo:'login'},
+  {path:'', pathMatch:'full',redirectTo:'index.html'},
   {path:'register',component:RegisterComponent},
   {path:'register/:reid',component:RegisterComponent},
   {path:'login',component:LoginComponent},

@@ -37,7 +37,6 @@ export class LoginComponent implements OnInit {
       this.userLoginID = data.sessionUserObjID;
       console.log("ค่า data.sessionUserObjID ที่ส่ง : "+this.userLoginID);
         this.ngZone.run(()=>{this.router.navigateByUrl('/profile/'+this.userLoginID)})
-      
     },(error:any)=>{
       let loginAgn='';
       window.alert("Login เข้าระบบไม่สำเร็จ");

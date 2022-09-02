@@ -13,18 +13,7 @@ const testUploadData = require('./../models/testUploadfile');// สำหรั�
 
 
 // *************** middleware check login ***************
-const IfNotLoggedIn = (req,res,next)=>{
-    if(!req.session.LoginStatus){
-        return res.redirect('/login')
-    }
-    next();
-}
-const IfLoggedIn = (req,res,next)=>{
-    if(req.session.LoginStatus){
-        return res.redirect("/profile/"+req.session.userObjId)
-    }
-    next();
-}
+
 // end middleware check login
 
 //สำหรับอัพโหลดไฟล์ภาพสมาชิก
@@ -151,7 +140,7 @@ backendRoute.post('/login',(req,res)=>{
                 const result = await bcryptjs.compare(loginObj.pws,User.pws)
                 const idObjMem = await member.findOne({email:loginObj.email})
                 if (idObjMem){
-                    let token = jwt.sign({id:idObjMem._id,email:idObjMem.email,levelWork:User.levelWork},secretkeyln,{expiresIn:'1h'});
+                    let token = jwt.sign({id:idObjMem._id,email:idObjMem.email,levelWork:User.levelWork},secretkeyln,{expiresIn:'300s'}); // ทำการสร้าง token 
                     return {id:idObjMem._id, email:idObjMem.email, LoginStatus:result, token}
                 } else {
                     return {id:null, e_mail:null, LoginStatus:false}
@@ -170,7 +159,7 @@ backendRoute.post('/login',(req,res)=>{
                 req.session.userObjId = result.id
                 req.session.email = result.email
                 req.session.LoginStatus = result.LoginStatus
-                console.log("ผ่านการ Login")
+                console.log("Login successfully")
                 const sessLogin={
                     sessionUserObjID:req.session.userObjId,
                     sessionEmail:req.session.email,
@@ -196,43 +185,66 @@ backendRoute.post('/login',(req,res)=>{
 
 // getProfile 
 backendRoute.get('/profile/:id',(req,res)=>{
-    member.findOne({_id:req.params.id},(err,data)=>{
-        if (err){
-            console.log('ไม่พบข้อมูลสมาชิก');
-            res.status(500).json(err);
-        } else {
-            res.status(200).json(data);
-        }
-    })
+
+            member.findOne({_id:req.params.id},(err,data)=>{
+                if (err){
+                    console.log('ไม่พบข้อมูลสมาชิก');
+                    res.status(500).json(err);
+                } else {
+                    res.status(200).json(data);
+                }
+            })
+
 })
 // get Profile List
 backendRoute.get('/profile-list',(req,res)=>{
-        member.find({},(err,data)=>{
-            if(err){
-                console.log('ไม่พบข้อมูลสมาชิก (profile-list)');
-                res.status(500).json(err);
-            } else {
-                res.status(200).json(data);
-            }
-        })
+    try{
+        // const token = req.headers.authorization.split(' ')[1];
+        // const decode = jwt.verify(token,secretkeyln);
+        // console.log('ค่า decode.email ที่ verify token (get api/profile-list) ได้คือ '+decode.email)
+        // if(decode.levelWork > 7){ // ถ้า levelWork ต่ำกว่าระดับ 7 จะไม่สามารถดู Profile-list ได้
+            member.find({},(err,data)=>{
+                if(err){
+                    console.log('ไม่พบข้อมูลสมาชิก (profile-list)');
+                    res.status(500).json(err);
+                } else {
+                    res.status(200).json(data);
+                }
+            })
+        // } else {
+        //     res.json({status:'error',message:'ระดับตำแหน่งไม่ผ่านเกณฑ์ที่กำหนด'});
+        // }
+        
+    }catch(err){
+        res.json({status:'error',message:err.message});
+    }
+
+        
 })
 
 // update Profile 
 backendRoute.put('/update-member/:id',(req,res)=>{
-    let data = req.body;
-    member.findByIdAndUpdate({_id:req.params.id},data).exec((err,doc)=>{
-        if(err){
-            console.log('ปรับปรุงข้อมูลสมาชิก ไม่สำเร็จ');
-            res.status(500).json(err);
-        } else {
-            console.log('ปรับปรุงข้อมูลสมาชิก สำเร็จ (Successfully)');
-            res.status(200).json(doc);
-        }
-    })
+    // const token = req.headers.authorization.split(' ')[1];
+    // const decode = jwt.verify(token,secretkeyln);
+    // if(decode){ // ถ้า verify token ไม่ผ่าน หรือ token หมดอายุ จะเข้าการทำงานต่อจากนี้ไม่ได้
+        let data = req.body;
+        member.findByIdAndUpdate({_id:req.params.id},data).exec((err,doc)=>{
+            if(err){
+                console.log('ปรับปรุงข้อมูลสมาชิก ไม่สำเร็จ');
+                res.status(500).json(err);
+            } else {
+                console.log('ปรับปรุงข้อมูลสมาชิก สำเร็จ (Successfully)');
+                res.status(200).json(doc);
+            }
+        })
+    // }
 });
 
 // *****  Delete Member **********
 backendRoute.delete('/delete-member/:email', (req,res,next)=>{
+    // const token = req.headers.authorization.split(' ')[1];
+    // const decode = jwt.verify(token,secretkeyln);
+    // if(decode){ // ถ้า verify token ไม่ผ่าน หรือ token หมดอายุ จะเข้าการทำงานต่อจากนี้ไม่ได้
         member.findOneAndRemove({email:req.params.email},(err,doc)=>{
             if(err){
                 return next(err)
@@ -248,19 +260,21 @@ backendRoute.delete('/delete-member/:email', (req,res,next)=>{
                 })
             }
         })
-    
+    // }
 })
 
 
-// จำลองการตรวจสอบการ Authorization ด้วย postman
+// ตรวจสอบการ token ที่สั่งมายัง api
 backendRoute.post('/authen',(req,res)=>{
-    try{
-        const token = req.headers.authorization.split(' ')[1];
-        const decode = jwt.verify(token,secretkeyln);
-        res.json({status:'ok',decode});
-    }catch(err){
-        res.json({status:'error',message:err.message});
-    }
+    // try{
+        console.log('ค่า req.headers = '+JSON.stringify(req.headers));
+        // const token = req.headers.authorization.split(' ')[1];
+        // const decode = jwt.verify(token,secretkeyln);
+        // res.json({status:'ok',decode});
+    // } catch(err){
+    //     res.json({status:'error',message:err.message});
+    // }
+
 })
 
 

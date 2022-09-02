@@ -1,6 +1,7 @@
 import { Component, OnInit,NgZone } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Router,ActivatedRoute } from '@angular/router';
+import { decode } from 'jose/dist/types/util/base64url';
 import { CrudService } from 'src/app/service/crud.service';
 
 @Component({
@@ -10,6 +11,7 @@ import { CrudService } from 'src/app/service/crud.service';
 })
 export class ProfileListComponent implements OnInit {
   dataProfile:any = [];
+  decodeData:any ='';
 
   constructor(private router: Router,
     private ngZone:NgZone,
@@ -18,13 +20,19 @@ export class ProfileListComponent implements OnInit {
      }
 
   ngOnInit(): void {
-    if(localStorage.getItem('token')){ // มีค่า token ถึงจะมีสิทธิ์เข้าหน้าเพจนี้
-      this.crudservice.getProfileList().subscribe((res)=>{
-        this.dataProfile = res;
-      })
-    } else {
-      this.ngZone.run(()=>{this.router.navigateByUrl('/login')})
-    }
+    // let tokendetail = localStorage.getItem('token');
+    // console.log('tokendetail in constructor = '+tokendetail);
+    // this.crudservice.auth().subscribe((data)=>{
+    //   this.decodeData = data;
+    //   console.log('ค่าผลลัพท์ Data หลังจากผ่าน service auth  =' + this.decodeData);
+    //   if(this.decodeData){
+        this.crudservice.getProfileList().subscribe((res)=>{
+          console.log('ค่า res ที่ส่งมาจาก crudservice-getprofileList ='+res);
+            this.dataProfile = res;
+        })
+    //   }
+    // })
+      
   }
 
   delete(dataObj:any, i:any){
